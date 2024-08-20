@@ -1,6 +1,7 @@
 import { IsInt, IsPositive, IsString, Length } from 'class-validator';
 
 export class CreatePropertyDto {
+  // always untuk semua group
   @IsString({ always: true })
   @Length(2, 10, { always: true, message: 'error on length' })
   name: string;

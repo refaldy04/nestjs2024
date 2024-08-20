@@ -27,6 +27,7 @@ export class PropertyController {
 
   @Get(':id')
   findOne(
+    // ini menggunakan pipe untuk mengkonversi param dan query
     @Param('id', ParseIntPipe)
     id: string,
     @Query('sort', ParseBoolPipe)
@@ -40,19 +41,22 @@ export class PropertyController {
   @Post()
   // @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   // @HttpCode(202)
+  // ini dekorator untuk menggunakan pipe, jika tidak menggunakan ini validasi tidak jalan
   @UsePipes(new ZodValidationPipe(createPropertySchema))
   create(
+    // bisa langsung di isi pipe
     @Body()
     body: CreatePropertyZodDto,
   ) {
     return body;
   }
 
+  // ini tidak menggunakan usePipes() karena menggunakan module validation
   @Patch(':id')
   update(
     @Param('id', ParseIdPipe) id,
     @Body() //ini bisa di isi new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, group: ['update'] })
-    body: CreatePropertyDto,
+    body: CreatePropertyDto, // karena ini pake module validation, group-nya jadi create walaupun ini update
   ) {
     return body;
   }
