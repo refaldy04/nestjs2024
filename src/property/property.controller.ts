@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  // Headers,
   Param,
   ParseBoolPipe,
   ParseIntPipe,
@@ -9,6 +10,7 @@ import {
   Post,
   Query,
   UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreatePropertyDto } from './dto/createProperty.dto';
 import { ZodValidationPipe } from './pipes/zodValidationPipe';
@@ -17,6 +19,8 @@ import {
   CreatePropertyZodDto,
 } from './dto/createPropertyZod.dto';
 import { ParseIdPipe } from './pipes/parseIdPipe';
+import { HeadersDto } from './dto/headers.dto';
+import { RequestHeader } from './pipes/request-header';
 
 @Controller('property')
 export class PropertyController {
@@ -39,7 +43,6 @@ export class PropertyController {
   }
 
   @Post()
-  // @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   // @HttpCode(202)
   // ini dekorator untuk menggunakan pipe, jika tidak menggunakan ini validasi tidak jalan
   @UsePipes(new ZodValidationPipe(createPropertySchema))
@@ -55,9 +58,15 @@ export class PropertyController {
   @Patch(':id')
   update(
     @Param('id', ParseIdPipe) id,
-    @Body() //ini bisa di isi new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, group: ['update'] })
+    @Body() //ini bisa diisi pipe seperti new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, group: ['update'] })
     body: CreatePropertyDto, // karena ini pake module validation, group-nya jadi create walaupun ini update
+    @RequestHeader(
+      new ValidationPipe({
+        validateCustomDecorators: true,
+      }), // validateCustomDecorators ini buat validasi header, jika ini false, validasi header tidak jalan
+    )
+    header: HeadersDto,
   ) {
-    return body;
+    return header;
   }
 }
